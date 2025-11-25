@@ -13,6 +13,7 @@ body {
     font-size: 17px;
     height: 100%;
     margin: 0;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
 }
 
 header, footer {
@@ -112,4 +113,26 @@ table.center {
 
 .custom-button:hover {
     background-color: green;
+}
+
+.trail {
+    position: absolute;
+    height: 6px;
+    width: 6px;
+    border-radius: 3px;
+    background: teal;
+}
+
+.spin {
+    width: 500px;
+    animation: spin 4s linear infinite
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg)
+    }
 }

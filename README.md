@@ -22,9 +22,9 @@ Each c source file should equal one html page.
 - Do not care about memory alocations
 
 Each file will be compiled on its own, and run to create its respective html file, the lifetime of each program will idealy be under a second
-and its all free'd at the end, so leaking memory is totally fine.
+and its all free'd at the end, so leak as much memory as you need.
 
-- The generated html isn't pretty
+- The generated html dosen't need to be pretty
 
 You're meant to look at the C code, not the generated html one.
 
