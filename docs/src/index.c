@@ -34,6 +34,11 @@ int main(void) {
         br();
 
         add_video("images/video.mp4", .type = "video/mp4", .id = "myReaction", .width = "300px", .height = "350px");
+
+        custom_tag("hr");
+
+        add_text("This is a testing and example page for using c2html, and testing if the api needs improvements", .do_br = true);
+        add_text("everything should be working fine on this page");
     }
     custom_tag("center", .close = true);
 
