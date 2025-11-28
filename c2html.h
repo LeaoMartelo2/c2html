@@ -12,12 +12,15 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 #define C2HTML_H
 
 #include <assert.h>
+#include <stdarg.h>
+#include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 
-#define C2HTML_VERSION "1.0.0"
+#define C2HTML_VERSION "1.1.0"
 
 #define fn static inline
 char *__filename;
@@ -37,7 +40,7 @@ fn void setup_file(c2html_obj *obj, const char *title, const char *path) {
     char *file_name = strdup(__filename);
     sprintf(__filename, "%s/%s", path, file_name);
 
-    printf("%s\n\n", __filename);
+    printf("Starting to write to %s\n\n", __filename);
 
     FILE *file = fopen(__filename, "w");
     assert(file != NULL);
@@ -66,6 +69,32 @@ fn void setup_file(c2html_obj *obj, const char *title, const char *path) {
     fclose(file);
 }
 
+fn long c2html_get_file_size(const char *filename) {
+
+    struct stat file_info;
+
+    if (stat(filename, &file_info) != 0) {
+        printf("Failed to stat file %s\n", filename);
+        exit(1);
+    }
+
+    return file_info.st_size;
+}
+
+fn void c2html_print_file_size(long size, const char *filename) {
+
+    const char *units[] = {"bytes", "Kb", "Mb", "Gb"};
+    double size_units = size;
+    int index = 0;
+
+    while (size_units >= 1024 && index < 3) {
+        size_units /= 1024;
+        index++;
+    }
+
+    printf("Written %.2f%s to %s\n\n", size_units, units[index], filename);
+}
+
 fn void end_file(c2html_obj *obj) {
 
     FILE *file = fopen(__filename, "a");
@@ -77,7 +106,43 @@ fn void end_file(c2html_obj *obj) {
     fprintf(file, "</html>\n");
 
     fclose(file);
-    free(__filename);
+
+    long size = c2html_get_file_size(__filename);
+    c2html_print_file_size(size, __filename);
+}
+
+fn const char *text_format(const char *text, ...){
+
+#ifndef MAX_TEXTFORMAT_BUFFERS
+#define MAX_TEXTFORMAT_BUFFERS 4
+#endif
+
+#ifndef MAX_TEXT_BUFFER_LENGHT
+#define MAX_TEXT_BUFFER_LENGHT 1024
+#endif
+
+    static char buffers[MAX_TEXTFORMAT_BUFFERS][MAX_TEXT_BUFFER_LENGHT];
+    static int index;
+
+    char *current_buffer = buffers[index];
+    memset(current_buffer, 0, MAX_TEXT_BUFFER_LENGHT);
+
+    va_list args;
+    va_start(args, text);
+    int required_sz = vsnprintf(current_buffer, MAX_TEXT_BUFFER_LENGHT, text, args);
+    va_end(args);
+
+    if(required_sz >= MAX_TEXT_BUFFER_LENGHT){
+        printf("Too large of a string to format:\n String passed: %s\n", text);
+        exit(1);
+    }
+
+    index +=1;
+
+    if(index >= MAX_TEXTFORMAT_BUFFERS) index = 0;
+
+    return  current_buffer;
+
 }
 
 fn void br() {
@@ -96,13 +161,12 @@ fn void br_repeat(int times) {
     }
 }
 
-fn void script(const char *path){
+fn void script(const char *path) {
 
     FILE *file = fopen(__filename, "a");
     assert(file != NULL);
 
     fprintf(file, "\n<script src=\"%s\"></script>\n", path);
-
 
     fclose(file);
 }
@@ -240,7 +304,7 @@ fn void add_image_opt(const char *img, addimg_opt opt) {
 
     if (img) fprintf(file, "\"%s\"", img);
 
-    if(opt.css_class) fprintf(file, " class=\"%s\"", opt.css_class);
+    if (opt.css_class) fprintf(file, " class=\"%s\"", opt.css_class);
 
     if (opt.width) fprintf(file, " width=%s", opt.width);
 
@@ -317,9 +381,9 @@ fn void add_video_opt(const char *src, video_options opt) {
 
     if (opt.type) fprintf(file, " type=\"%s\"", opt.type);
 
-    if(opt.width) fprintf(file, " width = \"%s\"", opt.width);
+    if (opt.width) fprintf(file, " width = \"%s\"", opt.width);
 
-    if(opt.height) fprintf(file, " height = \"%s\"", opt.height);
+    if (opt.height) fprintf(file, " height = \"%s\"", opt.height);
 
     fprintf(file, "></video>");
 
