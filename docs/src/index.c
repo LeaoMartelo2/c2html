@@ -6,7 +6,7 @@ int main(void) {
     const char *js_file = "script.js";
 
     C2HTML_OBJ(index, css_file, js_file);
-    setup_file(&index, "Home page", "../");
+    setup_file(&index, "Sample page", "..");
 
     custom_tag("center");
     {
@@ -39,13 +39,24 @@ int main(void) {
 
         add_text("This is a testing and example page for using c2html, and testing if the api needs improvements", .do_br = true);
         add_text("everything should be working fine on this page");
+
+        custom_tag("hr");
+
+        add_text("For loop using add_text(); and text_format();", .do_br = true, .do_paragraph = true);
+
+        for (int i = 0; i < 10; ++i) {
+            add_text(text_format("Line %d", i),
+                     .do_br = true);
+        }
     }
     custom_tag("center", .close = true);
 
     br();
 
     custom_tag("hr");
+    custom_tag("center");
     add_img("images/underconstruction.gif", .width = "150px");
+    custom_tag("center", .close = true);
 
     end_file(&index);
     return 0;
