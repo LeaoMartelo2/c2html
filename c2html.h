@@ -13,14 +13,13 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 
 #include <assert.h>
 #include <stdarg.h>
-#include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 
-#define C2HTML_VERSION "1.1.0"
+#define C2HTML_VERSION "1.1.2"
 
 #define fn static inline
 char *__filename;
@@ -111,7 +110,7 @@ fn void end_file(c2html_obj *obj) {
     c2html_print_file_size(size, __filename);
 }
 
-fn const char *text_format(const char *text, ...){
+fn const char *text_format(const char *text, ...) {
 
 #ifndef MAX_TEXTFORMAT_BUFFERS
 #define MAX_TEXTFORMAT_BUFFERS 4
@@ -132,17 +131,16 @@ fn const char *text_format(const char *text, ...){
     int required_sz = vsnprintf(current_buffer, MAX_TEXT_BUFFER_LENGHT, text, args);
     va_end(args);
 
-    if(required_sz >= MAX_TEXT_BUFFER_LENGHT){
+    if (required_sz >= MAX_TEXT_BUFFER_LENGHT) {
         printf("Too large of a string to format:\n String passed: %s\n", text);
         exit(1);
     }
 
-    index +=1;
+    index += 1;
 
-    if(index >= MAX_TEXTFORMAT_BUFFERS) index = 0;
+    if (index >= MAX_TEXTFORMAT_BUFFERS) index = 0;
 
-    return  current_buffer;
-
+    return current_buffer;
 }
 
 fn void br() {
@@ -207,21 +205,27 @@ fn void add_text_opt(const char *text, add_txt_opt opt) {
 
 #define add_text(text, ...) add_text_opt((text), (add_txt_opt){.do_br = false, .strong = false, .do_paragraph = false, __VA_ARGS__})
 
-fn void h1(const char *text) {
+fn void h(int sz, const char *text) {
 
     FILE *file = fopen(__filename, "a");
     assert(file != NULL);
 
-    fprintf(file, "<h1>%s</h1>\n", text);
+    fprintf(file, "<h%d>%s</h%d>\n", sz, text, sz);
 
     fclose(file);
 }
+
+#define h1(txt) h(1, txt)
+#define h2(txt) h(2, txt)
+#define h3(txt) h(3, txt)
+
 
 typedef struct {
     char *css_class;
     bool close;
     bool in_line;
     char *in_line_text;
+    char *id;
 } cstm_tag_opt;
 
 fn void custom_tag_opt(const char *tag, cstm_tag_opt opt) {
@@ -238,6 +242,10 @@ fn void custom_tag_opt(const char *tag, cstm_tag_opt opt) {
 
         if (opt.css_class) {
             fprintf(file, " class=\"%s\"", opt.css_class);
+        }
+
+        if (opt.id) {
+            fprintf(file, " id=\"%s\"", opt.id);
         }
 
         fprintf(file, ">");

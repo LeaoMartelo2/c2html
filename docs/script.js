@@ -82,3 +82,6 @@ function animate() {
 
 // And get it started by calling animate().
 animate();
+
+
+document.getElementById("roblox").textContent = "if this is the text showing up the element id IS working correctly";
