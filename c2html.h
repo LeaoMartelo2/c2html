@@ -13,13 +13,14 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 
 #include <assert.h>
 #include <stdarg.h>
+#include <stdarg.h
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 
-#define C2HTML_VERSION "1.1.2"
+#define C2HTML_VERSION "1.1.0"
 
 #define fn static inline
 char *__filename;
@@ -110,7 +111,7 @@ fn void end_file(c2html_obj *obj) {
     c2html_print_file_size(size, __filename);
 }
 
-fn const char *text_format(const char *text, ...) {
+fn const char *text_format(const char *text, ...){
 
 #ifndef MAX_TEXTFORMAT_BUFFERS
 #define MAX_TEXTFORMAT_BUFFERS 4
@@ -131,16 +132,17 @@ fn const char *text_format(const char *text, ...) {
     int required_sz = vsnprintf(current_buffer, MAX_TEXT_BUFFER_LENGHT, text, args);
     va_end(args);
 
-    if (required_sz >= MAX_TEXT_BUFFER_LENGHT) {
+    if(required_sz >= MAX_TEXT_BUFFER_LENGHT){
         printf("Too large of a string to format:\n String passed: %s\n", text);
         exit(1);
     }
 
-    index += 1;
+    index +=1;
 
-    if (index >= MAX_TEXTFORMAT_BUFFERS) index = 0;
+    if(index >= MAX_TEXTFORMAT_BUFFERS) index = 0;
 
-    return current_buffer;
+    return  current_buffer;
+
 }
 
 fn void br() {
