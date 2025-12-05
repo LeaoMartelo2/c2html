@@ -1,6 +1,6 @@
-all: page/index.html
+all: ../index.html
 
-page/index.html: index.c
+../index.html: index.c
 	cc index.c -o index.o
 	./index.o
 

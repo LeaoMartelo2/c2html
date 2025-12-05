@@ -13,14 +13,14 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 
 #include <assert.h>
 #include <stdarg.h>
-#include <stdarg.h
+#include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 
-#define C2HTML_VERSION "1.1.0"
+#define C2HTML_VERSION "1.1.2"
 
 #define fn static inline
 char *__filename;

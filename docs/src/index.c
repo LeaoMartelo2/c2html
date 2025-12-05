@@ -48,6 +48,18 @@ int main(void) {
             add_text(text_format("Line %d", i),
                      .do_br = true);
         }
+        br();
+
+    
+        for(int i = 5; i > 0; --i){
+            h(i, 
+                    text_format("h%d", i));
+        }
+
+        br();
+
+        custom_tag("h1", .id = "roblox", .in_line_text = "if this is showing up id is NOT working");
+
     }
     custom_tag("center", .close = true);
 
