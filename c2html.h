@@ -22,7 +22,7 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 
 #define C2HTML_VERSION_MAJOR 1 
 #define C2HTML_VERSION_MINOR 2
-#define C2HTML_VERSION_PATCH 0
+#define C2HTML_VERSION_PATCH 1
 
 #define fn static inline
 char *__filename;
@@ -93,7 +93,7 @@ fn void c2html_print_file_size(long size, const char *filename) {
         index++;
     }
 
-    printf("Written %.2f%s to %s\n\n", size_units, units[index], filename);
+    printf("\nWritten %.2f%s to %s\n\n", size_units, units[index], filename);
 }
 
 fn void end_file(c2html_obj *obj) {
@@ -404,5 +404,54 @@ fn void add_video_opt(const char *src, video_options opt) {
 }
 
 #define add_video(x, ...) add_video_opt((x), (video_options){__VA_ARGS__})
+
+
+#define MAX_LINE_LENGTH 1024
+
+typedef struct {
+    char **lines;
+    size_t count;
+} TextLines;
+
+fn TextLines read_file(const char *file_path) {
+    
+    FILE *file = fopen(file_path, "r");
+    TextLines text_lines = {0};  
+
+    assert(file !=  NULL);
+
+    printf("Reading from file: %s\n", file_path);
+
+    char line[MAX_LINE_LENGTH];
+
+    size_t capacity = 10;
+    text_lines.lines = (char **)malloc(capacity * sizeof(char *));
+
+    assert(text_lines.lines != NULL);
+
+    while (fgets(line, sizeof(line), file)) {
+        line[strcspn(line, "\n")] = 0;
+        
+        if (text_lines.count >= capacity) {
+            capacity *= 2;  
+            text_lines.lines = (char **)realloc(text_lines.lines, capacity * sizeof(char *));
+            
+            assert(text_lines.lines != NULL);
+        }
+
+        text_lines.lines[text_lines.count] = (char *)malloc((strlen(line) + 1) * sizeof(char));
+    
+        assert(text_lines.lines[text_lines.count] != NULL);
+        strcpy(text_lines.lines[text_lines.count], line);
+        text_lines.count++;
+    }
+
+    fclose(file);
+
+    printf("Read %zu lines from %s\n", text_lines.count, file_path);
+
+    return text_lines;
+}
+
 
 #endif /* ! C2HTML_H */

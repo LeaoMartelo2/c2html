@@ -60,6 +60,20 @@ int main(void) {
 
         custom_tag("h1", .id = "roblox", .in_line_text = "if this is showing up id is NOT working");
 
+        br();
+
+        h1("first line read from lorem_ipsum.txt:");
+
+        TextLines lorem_ipsum = read_file("lorem_ipsum.txt");
+
+        // only add one of the 9 lines
+        for (int i = 0; i < lorem_ipsum.count - 8; ++i) {
+            add_text(lorem_ipsum.lines[i]);
+        }
+
+        
+
+
     }
     custom_tag("center", .close = true);
 
@@ -73,3 +87,4 @@ int main(void) {
     end_file(&index);
     return 0;
 }
+
