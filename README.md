@@ -34,6 +34,7 @@ int main(void) {
     h1("Hello, World!");
 
     end_file(&index);
+    /* [MANDATORY] */
 
     return 0;
 }
