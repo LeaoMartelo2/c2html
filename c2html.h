@@ -22,7 +22,7 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 
 #define C2HTML_VERSION_MAJOR 1 
 #define C2HTML_VERSION_MINOR 2
-#define C2HTML_VERSION_PATCH 1
+#define C2HTML_VERSION_PATCH 2
 
 #define fn static inline
 char *__filename;
@@ -229,6 +229,7 @@ typedef struct {
     bool in_line;
     char *in_line_text;
     char *id;
+    char *on_click;
 } cstm_tag_opt;
 
 fn void custom_tag_opt(const char *tag, cstm_tag_opt opt) {
@@ -250,6 +251,11 @@ fn void custom_tag_opt(const char *tag, cstm_tag_opt opt) {
         if (opt.id) {
             fprintf(file, " id=\"%s\"", opt.id);
         }
+
+        if(opt.on_click) {
+            fprintf(file, " onclick=\"%s\"", opt.on_click);
+        }
+
 
         fprintf(file, ">");
 
