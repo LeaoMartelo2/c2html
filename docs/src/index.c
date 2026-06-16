@@ -2,89 +2,88 @@
 
 int main(void) {
 
-    const char *css_file = "style.css";
-    const char *js_file = "script.js";
+    c2html_init("../index.html",
+                .css_path = "style.css",
+                .js_path = "script.js",
+                .title = "Sample page");
 
-    C2HTML_OBJ(index, css_file, js_file);
-    setup_file(&index, "Sample page", "..");
+    with_tag(center) {
+        with_tag(h1) { add_text("Welcome to the eample page using c2html."); }
+        with_tag(h3) { 
+            add_text(text_format("with c2html version %d.%d.%d",
+                        C2HTML_VERSION_MAJOR, C2HTML_VERSION_MINOR, C2HTML_VERSION_PATCH));
+        }
 
-    custom_tag("center");
-    {
-        h1("Welcome to the example page using c2html.");
-        custom_tag("div height=500px", .css_class = "spin");
-        add_img("images/gd_my_passion.webp", .width = "300px");
-        custom_tag("div", .close = true);
+        push_tag(div heigth=500px, .css_class = "spin");
+        push_tag(img, .src = "images/gd_my_passion.webp", .width = 300);
+        pop_tag(div);
+
         br_repeat(3);
-        button("Apply epic cursor", .id = "changeCursorBtn", .css_class = "custom-button");
+
+
+        push_tag(button, .id = "changeCursorBtn", .css_class = "custom-button");
+        add_text("Apply epic cursor");
+        pop_tag(button);
     }
-    custom_tag("center", .close = true);
-    custom_tag("hr");
+
+    push_tag(hr, .no_close = true);
     br();
 
-    custom_tag("center");
-    {
+    with_tag(center) {
         add_text("dis webpag e is  ");
-        span("AMAZING", .css_class = "String");
-        add_text(" cuz itz maed with ", .do_br = true);
-        span("C ", .css_class = "StorageClass");
-        add_text("(epic langage)", .strong = true);
+        with_tag(span, .css_class = "String") add_text("AMAZING");
+        add_text("  cuz is maed with ");
+        br();
+        with_tag(span, .css_class = "StorageClass") { add_text("C "); }
+        with_tag(strong) add_text("(epic language)");
         br_repeat(2);
 
-        span("My reaction to this page:", .css_class = "big");
+        with_tag(span, .css_class = "big") add_text("My reaction to this page:");
         br();
 
-        add_video("images/video.mp4", .type = "video/mp4", .id = "myReaction", .width = "300px", .height = "350px");
+        push_tag(video controls, .src = "images/video.mp4", .type = "video/mp4", .id = "myReaction", .width = 300, .height = 350);
+        pop_tag(video);
 
-        custom_tag("hr");
+        push_tag(hr, .no_close = true);
 
-        add_text("This is a testing and example page for using c2html, and testing if the api needs improvements", .do_br = true);
-        add_text("everything should be working fine on this page");
+        with_tag(p) add_text("For loop using add_text(), and text_format()");
+        br();
 
-        custom_tag("hr");
-
-        add_text("For loop using add_text(); and text_format();", .do_br = true, .do_paragraph = true);
-
-        for (int i = 0; i < 10; ++i) {
-            add_text(text_format("Line %d", i),
-                     .do_br = true);
+        for(int i = 0; i < 10; ++i) {
+            add_text("Line %d", i);
+            br();
         }
         br();
 
-    
-        for(int i = 5; i > 0; --i){
-            h(i, 
-                    text_format("h%d", i));
+        for(int i = 5; i > 0; --i) {
+            const char *tag = text_format("h%d", i);
+            push_ftag(tag);
+            add_text("h%d\n", i);
+            pop_ftag(tag);
         }
+        br();
+
+        with_tag(h1, .id = "roblox") { add_text("if this is showing up ID is NOT working"); }
 
         br();
 
-        custom_tag("h1", .id = "roblox", .in_line_text = "if this is showing up id is NOT working");
-
-        br();
-
-        h1("first line read from lorem_ipsum.txt:");
+        with_tag(h1) { add_text("First line from lorem_ipsum.txt"); }
 
         TextLines lorem_ipsum = read_file("lorem_ipsum.txt");
 
-        // only add one of the 9 lines
-        for (int i = 0; i < lorem_ipsum.count - 8; ++i) {
+        for(int i = 0; i < lorem_ipsum.count -8; ++i) {
             add_text(lorem_ipsum.lines[i]);
         }
-
-        
-
-
     }
-    custom_tag("center", .close = true);
 
     br();
 
-    custom_tag("hr");
-    custom_tag("center");
-    add_img("images/underconstruction.gif", .width = "150px");
-    custom_tag("center", .close = true);
+    push_tag(hr, .no_close = true);
 
-    end_file(&index);
+    with_tag(center) {
+        push_tag(img, .width = 150, .src = "images/underconstruction.gif");
+    }
+
+    c2html_end_file();
     return 0;
 }
-
