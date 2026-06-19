@@ -73,6 +73,8 @@ int main(void) {
 
         with_tag(h1, .id = "roblox") { add_text("if this is showing up ID is NOT working"); }
 
+        add_comment("roblos");
+
         br();
 
         with_tag(h1) { add_text("First line from lorem_ipsum.txt"); }
@@ -82,6 +84,7 @@ int main(void) {
         for(int i = 0; i < lorem_ipsum.count -8; ++i) {
             add_text(lorem_ipsum.lines[i]);
         }
+
     }
 
     br();
@@ -104,8 +107,28 @@ int main(void) {
         );
 
 
-    }
+        add_text_unescaped("<h1>unescaped sequence with injected tags</h1>");
 
+        add_text("<h1>this will escape < & > and will not inject tags </h1>");
+
+
+        raw(
+            <script>
+                function dupe(curr_btn) {
+                let curr_container = curr_btn.parentElement;
+                let new_container = curr_container.cloneNode(true);
+                curr_container.insertAdjacentElement('afterend', new_container);
+                }
+            </script>
+        );
+
+        with_tag(div) {
+            push_tag(button, .on_click = "dupe(this)", .css_class = "custom-button");
+            add_text("duper");
+            pop_tag(button);
+        }
+
+    }
     
     c2html_end_file();
     return 0;

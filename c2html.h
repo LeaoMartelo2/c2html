@@ -22,7 +22,7 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 
 #define C2HTML_VERSION_MAJOR 2
 #define C2HTML_VERSION_MINOR 1
-#define C2HTML_VERSION_PATCH 0
+#define C2HTML_VERSION_PATCH 1
 
 static FILE *c2html_outfile = NULL;
 static char *__filename = NULL;
@@ -182,6 +182,7 @@ static inline void c2html_write_params(c2html_tag_params param) {
     if (param.href) fprintf(c2html_outfile, " href=\"%s\"", param.href);
     if (param.width) fprintf(c2html_outfile, " width=%s", param.width);
     if (param.height) fprintf(c2html_outfile, " height=%s", param.height);
+    if (param.on_click) fprintf(c2html_outfile, " onclick=\"%s\"", param.on_click);
     if (param.type) fprintf(c2html_outfile, " type=\"%s\"", param.type);
     if (param.alt) fprintf(c2html_outfile, " alt=\"%s\"", param.alt);
     if (param.title) fprintf(c2html_outfile, " title=\"%s\"", param.title);
@@ -244,14 +245,35 @@ static inline void pop_ftag(const char *tag) {
         )
 
 
-
-
-static inline void add_text(const char *format, ...) {
+static inline void add_text_unescaped(const char *format, ...) {
     va_list args;
     va_start(args, format);
     vfprintf(c2html_outfile, format, args);
     va_end(args);
 }
+
+static inline void add_text(const char *format, ...) {
+    
+    char buffer[4098];
+
+    va_list args;
+    va_start(args, format);
+
+    int safesz = vsnprintf(buffer, sizeof(buffer), format, args);
+    va_end(args);
+
+    if(safesz < 0) return;
+
+    for(int i = 0; buffer[i] != '\0'; ++i) {
+        switch(buffer[i]) {
+            case '<': fputs("&lt;", c2html_outfile); break;
+            case '>': fputs("&gt;", c2html_outfile); break;
+            case '&': fputs("&amp;", c2html_outfile); break;
+            default: fputc(buffer[i], c2html_outfile); break;
+        }
+    }
+   
+} 
 
 static inline void add_comment(const char *fmt, ...) {
     va_list args; va_start(args, fmt);
